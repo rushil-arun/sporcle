@@ -1,12 +1,12 @@
 package game
 
 type Manager struct {
-	Title   string               // name of the game; key into trivia/*.json
-	Code    string               // unique game code, 6 uppercase letters/numbers
-	Players map[*Player]struct{} // set of players in the game
-	Board   map[string]*Player   // category item -> player who claimed it (nil if unclaimed)
-	Colors  map[string]struct{}  // set of assigned colors
-	Time    int                  // seconds remaining (60 until start, then 180)
+	Title   string              // name of the game; key into trivia/*.json
+	Code    string              // unique game code, 6 uppercase letters/numbers
+	Players map[string]struct{} // set of player usernamesin the game
+	Board   map[string]*Player  // category item -> player who claimed it (nil if unclaimed)
+	Colors  map[string]struct{} // set of assigned colors
+	Time    int                 // seconds remaining (60 until start, then 180)
 }
 
 // NewManager creates a Manager with the given title and code. Time is set to 60,
@@ -15,7 +15,7 @@ func NewManager(title, code string) *Manager {
 	return &Manager{
 		Title:   title,
 		Code:    code,
-		Players: make(map[*Player]struct{}),
+		Players: make(map[string]struct{}),
 		Board:   make(map[string]*Player),
 		Colors:  make(map[string]struct{}),
 		Time:    60,
