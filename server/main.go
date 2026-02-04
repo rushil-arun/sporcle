@@ -11,11 +11,24 @@ import (
 
 func cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Works with any mux/router because it wraps an http.Handler.
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
+		// Echo requested headers when present to satisfy preflight requests.
+		if requested := r.Header.Get("Access-Control-Request-Headers"); requested != "" {
+			w.Header().Set("Access-Control-Allow-Headers", requested)
+		} else {
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		}
+
+		// Ensure caches don't mix responses across different preflight requests.
+		w.Header().Add("Vary", "Origin")
+		w.Header().Add("Vary", "Access-Control-Request-Method")
+		w.Header().Add("Vary", "Access-Control-Request-Headers")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -29,7 +42,8 @@ func main() {
 	mux := http.NewServeMux()
 	gameinit.RegisterRoutes(mux, globalState)
 
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	handler := cors(mux)
+	if err := http.ListenAndServe(":8080", handler); err != nil {
 		log.Fatal(err)
 	}
 }
