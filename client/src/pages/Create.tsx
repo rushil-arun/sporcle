@@ -2,11 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { useGame } from '../context/GameContext';
 import { useCreateGame, useTriviaFiles, useTriviaKeys } from '../hooks/useApi';
 
