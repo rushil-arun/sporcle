@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 228 35% 6%;
+    --foreground: 220 15% 94%;
+
+    --card: 228 30% 10%;
+    --card-foreground: 220 15% 94%;
+
+    --popover: 228 28% 12%;
+    --popover-foreground: 220 15% 94%;
+
+    --primary: 255 75% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 320 70% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 228 25% 16%;
+    --muted-foreground: 220 15% 55%;
+
+    --accent: 210 90% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 228 25% 18%;
+    --input: 228 25% 14%;
+    --ring: 255 75% 65%;
+
+    --radius: 0.75rem;
+
+    /* Brand tokens */
+    --color-violet: 255 75% 65%;
+    --color-pink: 320 70% 60%;
+    --color-blue: 210 90% 62%;
+    --color-red: 350 75% 58%;
+
+    --gradient-brand: linear-gradient(135deg, hsl(255 75% 65%), hsl(320 70% 60%));
+    --gradient-title: linear-gradient(135deg, hsl(210 90% 70%) 0%, hsl(255 75% 68%) 40%, hsl(320 70% 65%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(228 30% 11% / 0.9), hsl(255 30% 13% / 0.85));
+    --gradient-button-primary: linear-gradient(135deg, hsl(255 75% 62%), hsl(280 70% 58%));
+    --gradient-button-secondary: linear-gradient(135deg, hsl(320 70% 55%), hsl(350 70% 55%));
+
+    --shadow-glow-violet: 0 0 24px hsl(255 75% 65% / 0.35);
+    --shadow-glow-pink: 0 0 24px hsl(320 70% 60% / 0.35);
+    --shadow-card: 0 8px 32px hsl(228 35% 3% / 0.5);
+    --shadow-input: 0 2px 8px hsl(228 35% 3% / 0.4);
+
+    --sidebar-background: 228 35% 6%;
+    --sidebar-foreground: 220 15% 94%;
+    --sidebar-primary: 255 75% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 228 25% 16%;
+    --sidebar-accent-foreground: 220 15% 94%;
+    --sidebar-border: 228 25% 18%;
+    --sidebar-ring: 255 75% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer components {
+  .title-gradient {
+    background: var(--gradient-title);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-glass {
+    background: var(--gradient-card);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(12px);
+  }
+
+  .btn-primary {
+    background: var(--gradient-button-primary);
+    box-shadow: var(--shadow-glow-violet);
+    @apply text-white font-semibold rounded-full px-8 py-3 transition-all duration-200;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 32px hsl(255 75% 65% / 0.5);
+  }
+
+  .btn-secondary {
+    background: var(--gradient-button-secondary);
+    box-shadow: var(--shadow-glow-pink);
+    @apply text-white font-semibold rounded-full px-8 py-3 transition-all duration-200;
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 32px hsl(320 70% 60% / 0.5);
+  }
+
+  .input-sporacle {
+    @apply bg-input border border-border rounded-xl px-4 py-2.5 text-sm text-foreground w-full
+           placeholder:text-muted-foreground outline-none transition-all duration-200;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .input-sporacle:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+  }
+
+  .code-box {
+    @apply w-10 h-12 bg-input border-2 border-border rounded-xl text-center text-lg font-semibold text-foreground
+           outline-none transition-all duration-200 uppercase;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .code-box:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15), var(--shadow-glow-violet);
+  }
+
+  .code-box.filled {
+    border-color: hsl(var(--secondary));
+    box-shadow: 0 0 0 2px hsl(var(--secondary) / 0.2);
+  }
+
+  .select-sporacle {
+    @apply bg-input border border-border rounded-xl px-4 py-2.5 text-sm text-foreground w-full
+           outline-none transition-all duration-200 cursor-pointer;
+    font-family: 'DM Sans', sans-serif;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237c8ba1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  .select-sporacle:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+  }
+
+  .select-sporacle option {
+    background: hsl(228 30% 10%);
+    color: hsl(220 15% 94%);
+  }
+
+  .label-sporacle {
+    @apply text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block;
+    font-family: 'DM Sans', sans-serif;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
+}
