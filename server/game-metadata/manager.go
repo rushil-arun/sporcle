@@ -15,26 +15,27 @@ const LOBBY_TIME = 60
 const GAME_TIME = 180
 
 type Manager struct {
-	Title    string              // name of the game; key into trivia/*.json
-	Code     string              // unique game code, 6 uppercase letters/numbers
-	Players  map[string]*Player  // maps player usernames to player objects
-	Board    map[string]*Player  // category item -> player who claimed it (nil if unclaimed)
-	Colors   map[string]struct{} // set of assigned colors
-	Time     *time.Ticker        // seconds remaining (60 until start, then 180)
-	Outbound chan GameEvent
-	mu       sync.RWMutex
+	Title           string              // name of the game; key into trivia/*.json
+	Code            string              // unique game code, 6 uppercase letters/numbers
+	Players         map[string]*Player  // maps player usernames to player objects
+	Board           map[string]*Player  // category item -> player who claimed it (nil if unclaimed)
+	Colors          map[string]struct{} // set of assigned colors
+	Time            *time.Ticker        // seconds remaining (60 until start, then 180)
+	InboundRequests chan PlayerRequest
+	mu              sync.RWMutex
 }
 
 // NewManager creates a Manager with the given title and code. Time is set to 60,
 // board and colors are initialized empty.
 func NewManager(title, code string) *Manager {
 	return &Manager{
-		Title:   title,
-		Code:    code,
-		Players: make(map[string]*Player),
-		Board:   make(map[string]*Player),
-		Colors:  make(map[string]struct{}),
-		Time:    time.NewTicker(1 * LOBBY_TIME),
+		Title:           title,
+		Code:            code,
+		Players:         make(map[string]*Player),
+		Board:           make(map[string]*Player),
+		Colors:          make(map[string]struct{}),
+		Time:            time.NewTicker(1 * LOBBY_TIME),
+		InboundRequests: make(chan PlayerRequest, 256),
 	}
 }
 
@@ -109,4 +110,8 @@ func (m *Manager) AddPlayerLocked(username string, p *Player) {
 	}
 	m.Players[username] = p
 	m.Colors[p.Color] = struct{}{}
+}
+
+func (m *Manager) Run() {
+
 }

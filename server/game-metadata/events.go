@@ -16,7 +16,7 @@ The "Item" represents the item that the player
 wants to enter into the board.
 */
 type PlayerRequest struct {
-	Username string
-	Code     string
-	Item     string
+	Username string `json:"username"`
+	Code     string `json:"code"`
+	Item     string `json:"Item"`
 }
