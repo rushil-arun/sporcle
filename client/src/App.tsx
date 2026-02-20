@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { Join } from './pages/Join';
 import { Create } from './pages/Create';
 import { Lobby } from './pages/Lobby';
+import { Game } from './pages/Game'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/create" element={<Create />} />
             <Route path="/lobby" element={<Lobby />} />
+            <Route path="/game" element={<Game />} />
           </Routes>
         </Router>
       </TooltipProvider>

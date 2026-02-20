@@ -11,8 +11,8 @@ var PlayerColors = []string{
 	"#9B5DE5", "#00F5D4", "#F15BB5", "#00BBF9", "#Fee440",
 }
 
-const LOBBY_TIME = 100
-const GAME_TIME = 2
+const LOBBY_TIME = 10
+const GAME_TIME = 10
 
 type Manager struct {
 	Title           string              // name of the game; key into trivia/*.json

@@ -47,7 +47,7 @@ function getFloatStyle(index: number, total: number) {
 
 export const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { ws, wsUrl, code} = useGame();
+  const { ws, code} = useGame();
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [players, setPlayers] = useState<Map<string, Player>>(new Map());
   const [copied, setCopied] = useState(false);
@@ -78,7 +78,7 @@ export const Lobby: React.FC = () => {
           });
         } else if (message.Type === 'Start') {
           // Game hasn't been developed yet — return to home screen
-          navigate('/')
+          navigate('/game')
         }
       } catch (err) {
         console.error('Failed to parse WebSocket message:', err);
