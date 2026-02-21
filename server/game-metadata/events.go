@@ -9,6 +9,7 @@ type GameEvent struct {
 	TimeLeft int
 	Winner   *Player
 	Players  map[string]*Player
+	Counts   map[*Player]int
 }
 
 /*

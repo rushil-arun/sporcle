@@ -27,6 +27,7 @@ type Manager struct {
 	Players         map[string]*Player  // maps player usernames to player objects
 	Board           map[string]*Player  // category item -> player who claimed it (nil if unclaimed)
 	Colors          map[string]struct{} // set of assigned colors
+	Correct         map[*Player]int     // maps players to number of correct items they've inputted
 	Time            int                 // seconds remaining (60 until start, then 180)
 	InboundRequests chan PlayerRequest
 	GameStarted     bool
@@ -42,6 +43,7 @@ func NewManager(title, code string) *Manager {
 		Players:         make(map[string]*Player),
 		Board:           make(map[string]*Player),
 		Colors:          make(map[string]struct{}),
+		Correct:         make(map[*Player]int),
 		Time:            LOBBY_TIME,
 		GameStarted:     false,
 		InboundRequests: make(chan PlayerRequest, 256),
@@ -52,6 +54,7 @@ func (m *Manager) SetBoardValue(item string, player *Player) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.Board[item] = player
+
 }
 
 func (m *Manager) GetBoardValue(item string) *Player {
@@ -138,6 +141,7 @@ func (m *Manager) Run() {
 					m.BroadcastStartGame()
 				} else {
 					// TODO: Need to send a winner here
+					m.BroadcastCorrect()
 					m.CloseConnections()
 					return
 				}
@@ -167,6 +171,12 @@ func (m *Manager) Run() {
 				continue
 			}
 			m.Board[item] = player
+			count, ok := m.Correct[player]
+			if !ok {
+				m.Correct[player] = 1
+			} else {
+				m.Correct[player] = count + 1
+			}
 			m.BroadcastState()
 		}
 	}
@@ -203,6 +213,15 @@ func (m *Manager) BroadcastPlayers() {
 	for _, p := range m.Players {
 		select {
 		case p.OutboundRequests <- GameEvent{Type: "Players", Players: m.Players}:
+		default:
+		}
+	}
+}
+
+func (m *Manager) BroadcastCorrect() {
+	for _, p := range m.Players {
+		select {
+		case p.OutboundRequests <- GameEvent{Type: "Correct", Counts: m.Correct}:
 		default:
 		}
 	}
