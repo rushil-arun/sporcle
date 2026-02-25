@@ -21,7 +21,7 @@ var PlayerColors = []string{
 }
 
 const LOBBY_TIME = 10
-const GAME_TIME = 10
+const GAME_TIME = 20
 
 type Manager struct {
 	Title           string              // name of the game; key into trivia/*.json
@@ -33,6 +33,7 @@ type Manager struct {
 	Time            int                 // seconds remaining (60 until start, then 180)
 	InboundRequests chan PlayerRequest
 	GameStarted     bool
+	SquaresTaken    int
 	mu              sync.RWMutex
 }
 
@@ -55,6 +56,7 @@ func NewManager(title, code string) *Manager {
 		Time:            LOBBY_TIME,
 		GameStarted:     false,
 		InboundRequests: make(chan PlayerRequest, 256),
+		SquaresTaken:    0,
 	}
 }
 
@@ -193,6 +195,12 @@ func (m *Manager) Run() {
 			} else {
 				m.Correct[player] = count + 1
 			}
+			m.SquaresTaken += 1
+			if m.SquaresTaken == len(m.Board) {
+				m.BroadcastWinner()
+				m.Time = 0
+			}
+
 			m.BroadcastState()
 		}
 	}
