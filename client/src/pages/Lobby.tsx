@@ -47,7 +47,7 @@ function getFloatStyle(index: number, total: number) {
 
 export const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { ws, code} = useGame();
+  const { ws, code, title } = useGame();
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [players, setPlayers] = useState<Map<string, Player>>(new Map());
   const [copied, setCopied] = useState(false);
@@ -103,7 +103,7 @@ export const Lobby: React.FC = () => {
         <div className="card-glass rounded-2xl px-6 py-5 flex flex-col gap-4">
           {/* Game name */}
           <h1 className="font-display text-2xl font-bold title-gradient text-center leading-tight">
-            {"GAME_NAME"}
+            {title}
           </h1>
 
           {/* Code + countdown row */}

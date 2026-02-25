@@ -15,6 +15,8 @@ interface GameContextType {
   setPlayerColor: (color: string) => void;
   podium: LeaderboardEntry[];
   setPodium: (pd : LeaderboardEntry[]) => void;
+  title: string;
+  setTitle: (t: string) => void;
   reset: () => void;
 }
 
@@ -27,6 +29,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [playerColor, setPlayerColor] = useState('');
   const [podium, setPodium] = useState<LeaderboardEntry[]>([])
+  const [title, setTitle] = useState("");
 
   const reset = () => {
     if (ws) {
@@ -55,6 +58,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setPlayerColor,
         podium,
         setPodium,
+        title,
+        setTitle,
         reset,
       }}
     >

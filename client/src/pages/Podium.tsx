@@ -7,7 +7,7 @@ import { useGame } from '../context/GameContext';
 
 const Podium = () => {
   const navigate = useNavigate();
-  const { podium } = useGame()
+  const { podium, title } = useGame()
 
   // Podium order: 2nd, 1st, 3rd for visual layout
   const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean);
@@ -33,7 +33,7 @@ const Podium = () => {
             Game Over
           </span>
           <h1 className="font-display text-2xl font-bold title-gradient leading-tight mt-1">
-            {"Category_HERE"}
+            {title}
           </h1>
         </div>
       </header>

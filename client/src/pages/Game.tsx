@@ -6,9 +6,8 @@ import { useNavigate } from "react-router-dom";
 import type { LeaderboardEntry } from "@/types/types";
 
 // ── Mock config ────────────────────────────────────────────────────────────────
-const CATEGORY = "Countries in Europe";
+
 const TOTAL_SECONDS = 120;
-const TOTAL_ITEMS = 44; // total answers possible
 
 // Map<item, { username, color }>
 type PlayerMeta = { username: string; color: string };
@@ -39,7 +38,7 @@ export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
   const [board, setBoard] = useState<Map<string, PlayerMeta>>(INITIAL_BOARD);
-  const { username, ws, code, setPodium } = useGame();
+  const { username, ws, code, setPodium, title } = useGame();
   const [inputValue, setInputValue] = useState("");
 
   const handleSubmit = (item: string) => {
@@ -103,8 +102,8 @@ export const Game: React.FC = () => {
     return () => { ws.onmessage = null; }
   }, [ws]);
 
-  const grid = buildGrid(board, TOTAL_ITEMS);
-  const { cols, rows } = gridDimensions(TOTAL_ITEMS);
+  const grid = buildGrid(board, board.size);
+  const { cols, rows } = gridDimensions(board.size);
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const timeDisplay = `${minutes}:${seconds.toString().padStart(2, "0")}`;
@@ -122,7 +121,7 @@ export const Game: React.FC = () => {
               Category
             </span>
             <h1 className="font-display text-xl font-bold title-gradient leading-tight truncate">
-              {CATEGORY}
+              {title}
             </h1>
           </div>
 
@@ -149,14 +148,6 @@ export const Game: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* ── Score bar ── */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-3 animate-fade-up">
-        <p className="text-sm text-muted-foreground text-center">
-          <span className="text-foreground font-semibold">{board.size}</span> of{" "}
-          <span className="text-foreground font-semibold">{TOTAL_ITEMS}</span> found
-        </p>
-      </div>
 
       {/* ── Grid ── */}
       <main className="relative z-10 flex-1 min-h-0 w-full max-w-5xl mx-auto px-6 pt-3 pb-3">

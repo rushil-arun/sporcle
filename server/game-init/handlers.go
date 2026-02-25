@@ -118,7 +118,8 @@ func Connect(globalState *state.GlobalState, w http.ResponseWriter, r *http.Requ
 	// this will start routines for the player
 	m.AddPlayerLocked(username, player)
 	conn.WriteJSON(map[string]string{
-		"type": "success",
+		"type":    "success",
+		"message": m.Title,
 	})
 }
 

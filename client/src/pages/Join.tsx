@@ -9,7 +9,7 @@ const CODE_LENGTH = 6;
 
 export const Join: React.FC = () => {
   const navigate = useNavigate();
-  const { username, setUsername, code, setCode, setWsUrl, setWs } = useGame();
+  const { username, setUsername, code, setCode, setWsUrl, setWs, setTitle } = useGame();
   const { getWsUrl, loading, error } = useGetWsUrl();
 
   const [codeInputs, setCodeInputs] = useState<string[]>(
@@ -91,6 +91,7 @@ export const Join: React.FC = () => {
             if (data.type === 'error') {
               setError(data.message);
             } else if (data.type === 'success') {
+              setTitle(data.message)
               setWs(ws);
               navigate('/lobby');
             }
