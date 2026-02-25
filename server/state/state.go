@@ -55,6 +55,13 @@ func (s *GlobalState) SetGame(code string, m *game.Manager) {
 	s.games[code] = m
 }
 
+// RemoveGame removes the Manager for the given code.
+func (s *GlobalState) RemoveGame(code string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.games, code)
+}
+
 // Create checks code and title, then creates a new Manager with board keys from trivia.
 // Returns nil if code already exists or title is not found in trivia.
 func (state *GlobalState) Create(title string) *game.Manager {

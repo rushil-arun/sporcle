@@ -143,6 +143,9 @@ func (m *Manager) Run() {
 			m.Time--
 			if m.Time == 0 {
 				if !m.GameStarted {
+					if len(m.Players) == 0 {
+						return
+					}
 					m.Time = GAME_TIME
 					timer.Stop()
 					timer = time.NewTicker(1 * time.Second)

@@ -35,7 +35,11 @@ func CreateHandler(globalState *state.GlobalState, w http.ResponseWriter, r *htt
 		return
 	}
 
-	go m.Run()
+	go func() {
+		defer globalState.RemoveGame(m.Code)
+
+		m.Run()
+	}()
 
 	writeJSON(w, http.StatusOK, CreateResponse{Code: m.Code})
 }
@@ -95,6 +99,15 @@ func Connect(globalState *state.GlobalState, w http.ResponseWriter, r *http.Requ
 		conn.WriteJSON(map[string]string{
 			"type":    "error",
 			"message": "Username taken in this lobby.",
+		})
+		conn.Close()
+		return
+	}
+
+	if m.GameStarted {
+		conn.WriteJSON(map[string]string{
+			"type":    "error",
+			"message": "This game has already started",
 		})
 		conn.Close()
 		return
