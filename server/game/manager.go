@@ -143,6 +143,10 @@ func (m *Manager) Run() {
 		case <-timer.C:
 			fmt.Println(m.Time)
 			m.Time--
+			if m.Time < -10 { // arbitrary threshold to end game
+				m.CloseConnections()
+				return
+			}
 			if m.Time == 0 {
 				if !m.GameStarted {
 					if len(m.Players) == 0 {

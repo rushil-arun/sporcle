@@ -47,12 +47,16 @@ function getFloatStyle(index: number, total: number) {
 
 export const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { ws, code, title } = useGame();
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const { ws, code, title, timeLeft, setTimeLeft } = useGame();
   const [players, setPlayers] = useState<Map<string, Player>>(new Map());
   const [copied, setCopied] = useState(false);
-
-  var initialTime = 0
+  const [initialTime, setInitialTime] = useState(1);
+  
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const id = setInterval(() => setTimeLeft((t: any) => Math.max(0, t - 1)), 1000);
+    return () => clearInterval(id);
+  }, [timeLeft]);
 
   useEffect(() => {
     if (!ws) return;
@@ -61,7 +65,7 @@ export const Lobby: React.FC = () => {
         const message = JSON.parse(event.data);
         if (message.Type === 'Time') {
           if (initialTime == 0) {
-            initialTime = message.TimeLeft
+            setInitialTime(message.TimeLeft)
           }
           setTimeLeft(message.TimeLeft);
         } else if (message.Type === 'Players') {
@@ -95,9 +99,9 @@ export const Lobby: React.FC = () => {
   };
 
   return (
+    
     <div className="relative min-h-screen flex flex-col items-center overflow-hidden">
       <AnimatedBackground />
-
       {/* Top bar */}
       <header className="relative z-10 w-full max-w-2xl mx-auto px-6 pt-8 animate-fade-up">
         <div className="card-glass rounded-2xl px-6 py-5 flex flex-col gap-4">
@@ -131,16 +135,16 @@ export const Lobby: React.FC = () => {
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="font-display text-3xl font-bold text-foreground tabular-nums" style={{color: (timeLeft !== null && timeLeft <= 3) ? "red" : ""}}>
-                  {timeLeft}
+                  {timeLeft > 0 ? timeLeft : ""}
                 </span>
                 <span className="text-sm text-muted-foreground">s</span>
               </div>
               
-              <Progress
-                value={(timeLeft !== null && initialTime != 0) ? 100 - ((timeLeft / initialTime) * 100) : 0}
-                dir="rtl"
+              {/*<Progress
+                value={100 - ((timeLeft / initialTime) * 100)}
+                dir="ltr"
                 className="h-1.5 w-full bg-muted/50"
-              />
+              />*/}
             </div>
           </div>
 

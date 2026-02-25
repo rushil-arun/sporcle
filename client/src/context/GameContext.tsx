@@ -17,6 +17,8 @@ interface GameContextType {
   setPodium: (pd : LeaderboardEntry[]) => void;
   title: string;
   setTitle: (t: string) => void;
+  timeLeft: number;
+  setTimeLeft: (t: any) => void;
   reset: () => void;
 }
 
@@ -30,6 +32,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [playerColor, setPlayerColor] = useState('');
   const [podium, setPodium] = useState<LeaderboardEntry[]>([])
   const [title, setTitle] = useState("");
+  const [timeLeft, setTimeLeft] = useState<number>(0);
 
   const reset = () => {
     if (ws) {
@@ -60,6 +63,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setPodium,
         title,
         setTitle,
+        timeLeft,
+        setTimeLeft,
         reset,
       }}
     >

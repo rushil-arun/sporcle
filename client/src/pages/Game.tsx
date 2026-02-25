@@ -66,6 +66,7 @@ export const Game: React.FC = () => {
           if (initialTime == 0) {
             initialTime = message.TimeLeft
           }
+          console.log(message)
           setTimeLeft(message.TimeLeft);
         } else if (message.Type === 'Board') {
           setBoard((prev) => {
@@ -141,10 +142,10 @@ export const Game: React.FC = () => {
                 {timeDisplay}
               </span>
             </div>
-            <Progress
+            {/*<Progress
               value={100 - ((timeLeft / 10) * 100)}
               className="h-2.5 w-full bg-muted/50"
-            />
+            />*/}
           </div>
         </div>
       </header>
