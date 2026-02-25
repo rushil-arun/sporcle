@@ -58,8 +58,7 @@ export const Lobby: React.FC = () => {
     if (!ws) return;
     ws.onmessage = (event) => {
       try {
-        console.log(event.data)
-        const message = JSON.parse(JSON.stringify(event.data));
+        const message = JSON.parse(event.data);
         if (message.Type === 'Time') {
           if (initialTime == 0) {
             initialTime = message.TimeLeft

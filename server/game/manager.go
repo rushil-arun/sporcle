@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"sort"
 	"sync"
 	"time"
@@ -138,8 +139,9 @@ func (m *Manager) Run() {
 	for {
 		select {
 		case <-timer.C:
+			fmt.Println(m.Time)
 			m.Time--
-			if m.Time <= 0 {
+			if m.Time == 0 {
 				if !m.GameStarted {
 					m.Time = GAME_TIME
 					timer.Stop()
@@ -149,8 +151,6 @@ func (m *Manager) Run() {
 				} else {
 					// TODO: Need to send a winner here
 					m.BroadcastWinner()
-					m.CloseConnections()
-					return
 				}
 
 			}
@@ -161,7 +161,12 @@ func (m *Manager) Run() {
 			}
 
 		case event, ok := <-m.InboundRequests:
-			if !m.GameStarted {
+			if event.Item == "GAME_OVER" && m.Time <= 0 {
+				m.CloseConnections()
+				return
+			}
+
+			if !m.GameStarted || m.Time < 0 {
 				continue
 			}
 			if !ok || event.Code != m.Code {
@@ -173,6 +178,7 @@ func (m *Manager) Run() {
 				continue
 			}
 			item := event.Item
+
 			currPlayer, itemExists := m.Board[item]
 			if !itemExists || currPlayer != nil {
 				continue
@@ -185,7 +191,6 @@ func (m *Manager) Run() {
 				m.Correct[player] = count + 1
 			}
 			m.BroadcastState()
-			m.BroadcastCorrect()
 		}
 	}
 }
@@ -226,15 +231,6 @@ func (m *Manager) BroadcastPlayers() {
 	}
 }
 
-func (m *Manager) BroadcastCorrect() {
-	for _, p := range m.Players {
-		select {
-		case p.OutboundRequests <- GameEvent{Type: "Correct", Counts: m.Correct}:
-		default:
-		}
-	}
-}
-
 func (m *Manager) BroadcastWinner() {
 	lst := make([]LeaderboardEntry, 0, len(m.Correct))
 	for k, v := range m.Correct {
@@ -257,6 +253,9 @@ func (m *Manager) BroadcastWinner() {
 
 func (m *Manager) CloseConnections() {
 	for _, p := range m.Players {
+		if p.Connection == nil {
+			continue
+		}
 		p.Connection.Close()
 	}
 }

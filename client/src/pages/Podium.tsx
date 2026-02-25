@@ -1,26 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import { Trophy } from "lucide-react";
+import { useGame } from '../context/GameContext';
 
-type PlayerResult = {
-  username: string;
-  color: string;
-  score: number;
-};
+
 
 const Podium = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { category, players } = (location.state as { category: string; players: PlayerResult[] }) ?? {
-    category: "Unknown",
-    players: [],
-  };
-
-  // Sort descending by score, take top 3
-  const top3 = [...players].sort((a, b) => b.score - a.score).slice(0, 3);
+  const { podium } = useGame()
 
   // Podium order: 2nd, 1st, 3rd for visual layout
-  const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
+  const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean);
   const podiumHeights = ["h-32", "h-44", "h-24"];
   const podiumDelays = ["0.3s", "0.1s", "0.5s"];
   const placeLabels = ["2nd", "1st", "3rd"];
@@ -29,6 +19,8 @@ const Podium = () => {
     "hsl(42 90% 58%)",  // gold
     "hsl(25 70% 50%)",  // bronze
   ];
+
+  console.log(podiumOrder)
 
   return (
     <div className="relative h-screen flex flex-col overflow-hidden">
@@ -41,7 +33,7 @@ const Podium = () => {
             Game Over
           </span>
           <h1 className="font-display text-2xl font-bold title-gradient leading-tight mt-1">
-            {category}
+            {"Category_HERE"}
           </h1>
         </div>
       </header>
@@ -55,7 +47,7 @@ const Podium = () => {
         >
           <Trophy className="w-12 h-12" style={{ color: "hsl(42 90% 58%)" }} />
           <h2 className="font-display text-lg font-semibold text-foreground">
-            {top3[0]?.username ?? "No one"} wins!
+            {podium[0]?.username ?? "No one"} wins!
           </h2>
         </div>
 
@@ -81,7 +73,7 @@ const Podium = () => {
                     color: `hsl(${player.color})`,
                   }}
                 >
-                  {player.score} found
+                  {player.correct} found
                 </span>
 
                 {/* Podium block */}

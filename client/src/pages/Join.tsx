@@ -88,7 +88,6 @@ export const Join: React.FC = () => {
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            console.log(data)
             if (data.type === 'error') {
               setError(data.message);
             } else if (data.type === 'success') {

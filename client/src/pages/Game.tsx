@@ -71,7 +71,6 @@ export const Game: React.FC = () => {
         } else if (message.Type === 'Board') {
           setBoard((prev) => {
             const updated = new Map(prev);
-            console.log(Object.entries(message.State))
             for (const [item, playerData] of Object.entries(message.State)) {
               const player = playerData == null ? { username : "", color: "#888888"} : playerData as { username?: string; color?: string };
               updated.set(item, {
@@ -88,7 +87,12 @@ export const Game: React.FC = () => {
           entries.forEach((e: LeaderboardEntry) => {
             podium.push({ username: e.username, color: e.color, correct: e.correct})
           })
+          console.log(entries)
           setPodium(entries);
+          const request = { username : username, code: code, Item: "GAME_OVER"}
+          if (ws?.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify(request));
+          }
           navigate('/podium')
         }
       } catch (err) {
