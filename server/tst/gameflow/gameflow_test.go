@@ -3,8 +3,8 @@ package gameflow
 import (
 	"net/http"
 	"net/http/httptest"
+	game "server/game"
 	gameinit "server/game-init"
-	game "server/game-metadata"
 	"server/state"
 	"strings"
 	"testing"

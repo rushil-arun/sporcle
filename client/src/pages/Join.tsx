@@ -92,7 +92,6 @@ export const Join: React.FC = () => {
             if (data.type === 'error') {
               setError(data.message);
             } else if (data.type === 'success') {
-              ws.onmessage = null
               setWs(ws);
               navigate('/lobby');
             }

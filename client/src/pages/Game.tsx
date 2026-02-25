@@ -3,6 +3,7 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import { Progress } from "@/components/ui/progress";
 import { useGame } from '../context/GameContext';
 import { useNavigate } from "react-router-dom";
+import type { LeaderboardEntry } from "@/types/types";
 
 // ── Mock config ────────────────────────────────────────────────────────────────
 const CATEGORY = "Countries in Europe";
@@ -38,7 +39,7 @@ export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
   const [board, setBoard] = useState<Map<string, PlayerMeta>>(INITIAL_BOARD);
-  const { username, ws, code } = useGame();
+  const { username, ws, code, setPodium } = useGame();
   const [inputValue, setInputValue] = useState("");
 
   const handleSubmit = (item: string) => {
@@ -80,6 +81,15 @@ export const Game: React.FC = () => {
             }
             return updated;
           });
+        } else if (message.Type === 'Leaderboard') {
+          const message = JSON.parse(event.data)
+          const entries = message.Leaderboard
+          var podium: LeaderboardEntry[] = []
+          entries.forEach((e: LeaderboardEntry) => {
+            podium.push({ username: e.username, color: e.color, correct: e.correct})
+          })
+          setPodium(entries);
+          navigate('/podium')
         }
       } catch (err) {
         console.error('Failed to parse WebSocket message:', err);

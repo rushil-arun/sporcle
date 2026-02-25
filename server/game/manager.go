@@ -1,6 +1,7 @@
 package game
 
 import (
+	"sort"
 	"sync"
 	"time"
 )
@@ -18,8 +19,8 @@ var PlayerColors = []string{
 	"51 99% 62%",   // #Fee440
 }
 
-const LOBBY_TIME = 2
-const GAME_TIME = 2
+const LOBBY_TIME = 10
+const GAME_TIME = 10
 
 type Manager struct {
 	Title           string              // name of the game; key into trivia/*.json
@@ -32,6 +33,12 @@ type Manager struct {
 	InboundRequests chan PlayerRequest
 	GameStarted     bool
 	mu              sync.RWMutex
+}
+
+type LeaderboardEntry struct {
+	Username string `json:"username"`
+	Color    string `json:"color"`
+	Count    int    `json:"correct"`
 }
 
 // NewManager creates a Manager with the given title and code. Time is set to 60,
@@ -141,7 +148,7 @@ func (m *Manager) Run() {
 					m.BroadcastStartGame()
 				} else {
 					// TODO: Need to send a winner here
-					m.BroadcastCorrect()
+					m.BroadcastWinner()
 					m.CloseConnections()
 					return
 				}
@@ -178,6 +185,7 @@ func (m *Manager) Run() {
 				m.Correct[player] = count + 1
 			}
 			m.BroadcastState()
+			m.BroadcastCorrect()
 		}
 	}
 }
@@ -222,6 +230,26 @@ func (m *Manager) BroadcastCorrect() {
 	for _, p := range m.Players {
 		select {
 		case p.OutboundRequests <- GameEvent{Type: "Correct", Counts: m.Correct}:
+		default:
+		}
+	}
+}
+
+func (m *Manager) BroadcastWinner() {
+	lst := make([]LeaderboardEntry, 0, len(m.Correct))
+	for k, v := range m.Correct {
+		lst = append(lst, LeaderboardEntry{Username: k.Username, Color: k.Color, Count: v})
+	}
+	sort.Slice(lst, func(i, j int) bool {
+		return lst[i].Count > lst[j].Count
+	})
+	if len(lst) > 3 {
+		lst = lst[:3]
+	}
+
+	for _, p := range m.Players {
+		select {
+		case p.OutboundRequests <- GameEvent{Type: "Leaderboard", Leaderboard: lst}:
 		default:
 		}
 	}

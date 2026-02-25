@@ -4,12 +4,13 @@ package game
 An event that we will send back to a player
 */
 type GameEvent struct {
-	Type     string
-	State    map[string]*Player
-	TimeLeft int
-	Winner   *Player
-	Players  map[string]*Player
-	Counts   map[*Player]int
+	Type        string
+	State       map[string]*Player
+	TimeLeft    int
+	Winner      *Player
+	Players     map[string]*Player
+	Counts      map[*Player]int
+	Leaderboard []LeaderboardEntry
 }
 
 /*

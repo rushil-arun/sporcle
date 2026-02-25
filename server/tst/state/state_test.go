@@ -3,7 +3,7 @@ package state_test
 import (
 	"testing"
 
-	game "server/game-metadata"
+	game "server/game"
 	state "server/state"
 )
 

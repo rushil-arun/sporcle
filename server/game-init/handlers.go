@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	game "server/game-metadata"
+	game "server/game"
 	state "server/state"
 
 	"github.com/gorilla/websocket"

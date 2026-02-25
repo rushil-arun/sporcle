@@ -1,0 +1,1 @@
+export type LeaderboardEntry = { username : string, color : string, correct : number}

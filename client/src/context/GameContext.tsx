@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components -- useGame is a required export */
 import React, { createContext, useContext, useState } from 'react';
+import type { LeaderboardEntry } from '@/types/types';
 
 interface GameContextType {
   username: string;
@@ -12,6 +13,8 @@ interface GameContextType {
   setWs: (ws: WebSocket | null) => void;
   playerColor: string;
   setPlayerColor: (color: string) => void;
+  podium: LeaderboardEntry[];
+  setPodium: (pd : LeaderboardEntry[]) => void;
   reset: () => void;
 }
 
@@ -23,6 +26,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [wsUrl, setWsUrl] = useState('');
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [playerColor, setPlayerColor] = useState('');
+  const [podium, setPodium] = useState<LeaderboardEntry[]>([])
 
   const reset = () => {
     if (ws) {
@@ -33,6 +37,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCode('');
     setWsUrl('');
     setPlayerColor('');
+    setPodium([]);
   };
 
   return (
@@ -48,6 +53,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setWs,
         playerColor,
         setPlayerColor,
+        podium,
+        setPodium,
         reset,
       }}
     >

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	game "server/game-metadata"
+	game "server/game"
 )
 
 const codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
