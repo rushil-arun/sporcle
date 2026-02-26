@@ -15,7 +15,7 @@ const capitalizeWords = (str: string): string => {
 
 export const Create: React.FC = () => {
   const navigate = useNavigate();
-  const { setCode } = useGame();
+  const { setCode, setTimeLeft } = useGame();
   const {
     createGame,
     loading: creatingGame,
@@ -76,6 +76,7 @@ export const Create: React.FC = () => {
     const code = await createGame(selectedDifficulty, Number(lobbyTime), Number(gameTime));
     if (code) {
       setCode(code);
+      setTimeLeft(0);
       navigate('/join');
     } else {
       setSubmitError(createError || 'Failed to create game');

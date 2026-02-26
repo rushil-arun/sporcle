@@ -141,6 +141,10 @@ func (m *Manager) Run() {
 	for {
 		select {
 		case <-timer.C:
+			if len(m.Players) == 0 {
+				// don't tick until someone has joined
+				continue
+			}
 			m.Time--
 			if m.Time < -10 { // arbitrary threshold to end game
 				m.CloseConnections()

@@ -4,7 +4,6 @@ import { useGame } from '../context/GameContext';
 import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
 import { Copy, Check } from "lucide-react";
 
 interface Player {
@@ -50,13 +49,7 @@ export const Lobby: React.FC = () => {
   const { ws, code, title, timeLeft, setTimeLeft } = useGame();
   const [players, setPlayers] = useState<Map<string, Player>>(new Map());
   const [copied, setCopied] = useState(false);
-  const [initialTime, setInitialTime] = useState(1);
-  
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const id = setInterval(() => setTimeLeft((t: any) => Math.max(0, t - 1)), 1000);
-    return () => clearInterval(id);
-  }, [timeLeft]);
+  const [initialTime, setInitialTime] = useState(0);
 
   useEffect(() => {
     if (!ws) return;
@@ -83,6 +76,7 @@ export const Lobby: React.FC = () => {
         } else if (message.Type === 'Start') {
           // Game hasn't been developed yet — return to home screen
           ws.onmessage = null
+          setTimeLeft(0);
           navigate('/game')
         }
       } catch (err) {
@@ -140,12 +134,6 @@ export const Lobby: React.FC = () => {
                 </span>
                 <span className="text-sm text-muted-foreground">s</span>
               </div>
-              
-              {/*<Progress
-                value={100 - ((timeLeft / initialTime) * 100)}
-                dir="ltr"
-                className="h-1.5 w-full bg-muted/50"
-              />*/}
             </div>
           </div>
 

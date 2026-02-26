@@ -6,8 +6,6 @@ import type { LeaderboardEntry } from "@/types/types";
 
 // ── Mock config ────────────────────────────────────────────────────────────────
 
-const TOTAL_SECONDS = 120;
-
 // Map<item, { username, color }>
 type PlayerMeta = { username: string; color: string };
 const INITIAL_BOARD = new Map<string, PlayerMeta>([
@@ -34,9 +32,8 @@ function gridDimensions(total: number) {
 // ── Component ──────────────────────────────────────────────────────────────────
 export const Game: React.FC = () => {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
   const [board, setBoard] = useState<Map<string, PlayerMeta>>(INITIAL_BOARD);
-  const { username, ws, code, setPodium, title } = useGame();
+  const { username, ws, code, setPodium, title, timeLeft, setTimeLeft } = useGame();
   const [inputValue, setInputValue] = useState("");
 
   const handleSubmit = (item: string) => {
@@ -48,23 +45,11 @@ export const Game: React.FC = () => {
   }
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
-    const id = setInterval(() => setTimeLeft((t) => Math.max(0, t - 1)), 1000);
-    return () => clearInterval(id);
-  }, [timeLeft]);
-
-  var initialTime = 0
-
-  useEffect(() => {
     if (!ws) return;
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
         if (message.Type === 'Time') {
-          if (initialTime == 0) {
-            initialTime = message.TimeLeft
-          }
-          console.log(message)
           setTimeLeft(message.TimeLeft);
         } else if (message.Type === 'Board') {
           setBoard((prev) => {
@@ -137,13 +122,9 @@ export const Game: React.FC = () => {
                   transition: "color 0.3s",
                 }}
               >
-                {timeDisplay}
+                {timeLeft > 0 ? timeDisplay: ""}
               </span>
             </div>
-            {/*<Progress
-              value={100 - ((timeLeft / 10) * 100)}
-              className="h-2.5 w-full bg-muted/50"
-            />*/}
           </div>
         </div>
       </header>
