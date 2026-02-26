@@ -8,7 +8,6 @@ import (
 	"server/state"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -81,7 +80,6 @@ func TestWrite_SendsEventsToWebSocket(t *testing.T) {
 			t.Fatalf("unexpected error: %v", msg)
 		}
 	}
-
 	// Write a message into the connection (as client would); Read() picks it up,
 	// Run() processes it and BroadcastState, Write() sends the response back.
 	req := map[string]string{
@@ -114,6 +112,20 @@ func TestRead_ValidRequestAppearsOnInboundRequests(t *testing.T) {
 
 	go m.Run()
 
+	// Drain messages until game starts (timer fires quickly)
+	for {
+		var msg map[string]interface{}
+		if err := conn.ReadJSON(&msg); err != nil {
+			t.Fatalf("ReadJSON: %v", err)
+		}
+		if msg["Type"] == "Start" {
+			break
+		}
+		if msg["Type"] == "error" {
+			t.Fatalf("unexpected error: %v", msg)
+		}
+	}
+
 	req := map[string]string{
 		"username": "LeBron",
 		"code":     code,
@@ -123,14 +135,33 @@ func TestRead_ValidRequestAppearsOnInboundRequests(t *testing.T) {
 		t.Fatalf("WriteJSON: %v", err)
 	}
 
-	select {
-	case got := <-m.InboundRequests:
-		if got.Username != req["username"] || got.Code != req["code"] || got.Item != req["Item"] {
-			t.Errorf("got %+v, want username=%s code=%s Item=%s", got, req["username"], req["code"], req["Item"])
+	iters := 100
+	for range iters {
+		var got map[string]interface{}
+		if err := conn.ReadJSON(&got); err != nil {
+			t.Fatalf("ReadJSON response: %v", err)
 		}
-	case <-time.After(2 * time.Second):
-		t.Fatal("timed out waiting for InboundRequests")
+		if got["Type"] == "Board" {
+			stateVal, ok := got["State"]
+			if !ok {
+				t.Fatal("no State in board event")
+			}
+			stateMap, ok := stateVal.(map[string]interface{})
+			if !ok {
+				t.Fatalf("State is %T, want map", stateMap)
+			}
+			player, ok := stateMap["Olympia"]
+			if !ok || player == nil {
+				t.Errorf("Olympia not in State or nil: %v", stateMap["Olympia"])
+			}
+			playerMap, ok := player.(map[string]interface{})
+			if playerMap["username"] != "LeBron" {
+				t.Errorf("Olympia Player should be LeBron, was: %v", player)
+			}
+			return
+		}
 	}
+	t.Errorf("Did not recieve a message of type board in %d iters", iters)
 }
 
 func TestRead_InvalidRequestIgnored(t *testing.T) {

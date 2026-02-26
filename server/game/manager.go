@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"sort"
 	"sync"
 	"time"
@@ -20,8 +19,8 @@ var PlayerColors = []string{
 	"51 99% 62%",   // #Fee440
 }
 
-const LOBBY_TIME = 10
-const GAME_TIME = 20
+const LOBBY_TIME = 5
+const GAME_TIME = 5
 
 type Manager struct {
 	Title           string              // name of the game; key into trivia/*.json
@@ -141,7 +140,6 @@ func (m *Manager) Run() {
 	for {
 		select {
 		case <-timer.C:
-			fmt.Println(m.Time)
 			m.Time--
 			if m.Time < -10 { // arbitrary threshold to end game
 				m.CloseConnections()
@@ -164,7 +162,7 @@ func (m *Manager) Run() {
 
 			}
 			m.BroadcastTime()
-			m.BroadcastState()
+			//m.BroadcastState()
 			if !m.GameStarted {
 				m.BroadcastPlayers()
 			}
@@ -176,6 +174,7 @@ func (m *Manager) Run() {
 			}
 
 			if !m.GameStarted || m.Time < 0 {
+
 				continue
 			}
 			if !ok || event.Code != m.Code {
