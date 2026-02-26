@@ -19,9 +19,6 @@ var PlayerColors = []string{
 	"51 99% 62%",   // #Fee440
 }
 
-const LOBBY_TIME = 5
-const GAME_TIME = 5
-
 type Manager struct {
 	Title           string              // name of the game; key into trivia/*.json
 	Code            string              // unique game code, 6 uppercase letters/numbers
@@ -33,6 +30,8 @@ type Manager struct {
 	InboundRequests chan PlayerRequest
 	GameStarted     bool
 	SquaresTaken    int
+	LobbyTime       int
+	GameTime        int
 	mu              sync.RWMutex
 }
 
@@ -44,7 +43,7 @@ type LeaderboardEntry struct {
 
 // NewManager creates a Manager with the given title and code. Time is set to 60,
 // board and colors are initialized empty.
-func NewManager(title, code string) *Manager {
+func NewManager(title, code string, lobbyTime, gameTime int) *Manager {
 	return &Manager{
 		Title:           title,
 		Code:            code,
@@ -52,10 +51,12 @@ func NewManager(title, code string) *Manager {
 		Board:           make(map[string]*Player),
 		Colors:          make(map[string]struct{}),
 		Correct:         make(map[*Player]int),
-		Time:            LOBBY_TIME,
+		Time:            lobbyTime,
 		GameStarted:     false,
 		InboundRequests: make(chan PlayerRequest, 256),
 		SquaresTaken:    0,
+		LobbyTime:       lobbyTime,
+		GameTime:        gameTime,
 	}
 }
 
@@ -150,7 +151,7 @@ func (m *Manager) Run() {
 					if len(m.Players) == 0 {
 						return
 					}
-					m.Time = GAME_TIME
+					m.Time = m.GameTime
 					timer.Stop()
 					timer = time.NewTicker(1 * time.Second)
 					m.GameStarted = true

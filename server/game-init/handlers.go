@@ -29,7 +29,7 @@ func CreateHandler(globalState *state.GlobalState, w http.ResponseWriter, r *htt
 		writeError(w, http.StatusBadRequest, "title required")
 		return
 	}
-	m := globalState.Create(req.Title)
+	m := globalState.Create(req.Title, req.LobbyTime, req.GameTime)
 	if m == nil {
 		writeError(w, http.StatusBadRequest, "Invalid title")
 		return

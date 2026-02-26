@@ -8,6 +8,7 @@ import (
 	game "server/game"
 	gameinit "server/game-init"
 	"server/state"
+	test "server/tst"
 	"strings"
 	"testing"
 
@@ -190,7 +191,7 @@ func TestConnect_UsernameAlreadyConnected(t *testing.T) {
 	defer func() { state.TriviaBasePath = saved }()
 
 	globalState := state.NewGlobalState()
-	m := globalState.Create("US Capitals")
+	m := globalState.Create("US Capitals", test.LOBBY_TIME, test.GAME_TIME)
 	if m == nil {
 		t.Fatal("Create failed")
 	}
@@ -228,7 +229,7 @@ func TestConnect_FirstConnection(t *testing.T) {
 	defer func() { state.TriviaBasePath = saved }()
 
 	globalState := state.NewGlobalState()
-	m := globalState.Create("US Capitals")
+	m := globalState.Create("US Capitals", test.LOBBY_TIME, test.GAME_TIME)
 	if m == nil {
 		t.Fatal("Create failed")
 	}
@@ -260,7 +261,7 @@ func TestConnect_TwoDifferentUsers(t *testing.T) {
 	defer func() { state.TriviaBasePath = saved }()
 
 	globalState := state.NewGlobalState()
-	m := globalState.Create("US Capitals")
+	m := globalState.Create("US Capitals", test.LOBBY_TIME, test.GAME_TIME)
 	if m == nil {
 		t.Fatal("Create failed")
 	}

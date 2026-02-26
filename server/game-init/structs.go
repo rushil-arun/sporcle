@@ -2,7 +2,9 @@ package gameinit
 
 // CreateRequest is the JSON body for /create-game.
 type CreateRequest struct {
-	Title string `json:"title"`
+	Title     string `json:"title"`
+	LobbyTime int    `json:"lobby_time"`
+	GameTime  int    `json:"game_time"`
 }
 
 type CreateResponse struct {

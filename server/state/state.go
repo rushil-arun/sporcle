@@ -64,7 +64,7 @@ func (s *GlobalState) RemoveGame(code string) {
 
 // Create checks code and title, then creates a new Manager with board keys from trivia.
 // Returns nil if code already exists or title is not found in trivia.
-func (state *GlobalState) Create(title string) *game.Manager {
+func (state *GlobalState) Create(title string, lobbyTime, gameTime int) *game.Manager {
 	state.mu.Lock()
 	items := loadTriviaItems(title)
 	if items == nil {
@@ -72,7 +72,7 @@ func (state *GlobalState) Create(title string) *game.Manager {
 		return nil
 	}
 	code := state.generateCode()
-	m := game.NewManager(title, code)
+	m := game.NewManager(title, code, lobbyTime, gameTime)
 	for _, item := range items {
 		m.Board[item] = nil
 	}
