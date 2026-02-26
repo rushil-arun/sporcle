@@ -10,7 +10,7 @@ const Podium = () => {
   const { podium, title } = useGame()
 
   // Podium order: 2nd, 1st, 3rd for visual layout
-  const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean);
+  const podiumOrder = [podium[1], podium[0], podium[2]]
   const podiumHeights = ["h-32", "h-44", "h-24"];
   const podiumDelays = ["0.3s", "0.1s", "0.5s"];
   const placeLabels = ["2nd", "1st", "3rd"];
