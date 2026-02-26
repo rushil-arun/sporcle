@@ -52,7 +52,7 @@ func TestCreateHandler_InvalidTitle(t *testing.T) {
 	defer func() { state.TriviaBasePath = saved }()
 
 	globalState := state.NewGlobalState()
-	body, _ := json.Marshal(gameinit.CreateRequest{Title: "NoSuchTitle"})
+	body, _ := json.Marshal(gameinit.CreateRequest{Title: "NoSuchTitle", LobbyTime: test.LOBBY_TIME, GameTime: test.GAME_TIME})
 	req := httptest.NewRequest(http.MethodPost, "/create-game", bytes.NewReader(body))
 	rec := httptest.NewRecorder()
 	gameinit.CreateHandler(globalState, rec, req)
@@ -67,7 +67,7 @@ func TestCreateHandler_Success(t *testing.T) {
 	defer func() { state.TriviaBasePath = saved }()
 
 	globalState := state.NewGlobalState()
-	body, _ := json.Marshal(gameinit.CreateRequest{Title: "US Capitals"})
+	body, _ := json.Marshal(gameinit.CreateRequest{Title: "US Capitals", LobbyTime: test.LOBBY_TIME, GameTime: test.GAME_TIME})
 	req := httptest.NewRequest(http.MethodPost, "/create-game", bytes.NewReader(body))
 	rec := httptest.NewRecorder()
 	gameinit.CreateHandler(globalState, rec, req)

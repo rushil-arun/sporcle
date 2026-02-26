@@ -82,6 +82,7 @@ export const Lobby: React.FC = () => {
           });
         } else if (message.Type === 'Start') {
           // Game hasn't been developed yet — return to home screen
+          ws.onmessage = null
           navigate('/game')
         }
       } catch (err) {

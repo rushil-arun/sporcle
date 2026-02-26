@@ -155,7 +155,11 @@ func (m *Manager) Run() {
 					timer.Stop()
 					timer = time.NewTicker(1 * time.Second)
 					m.GameStarted = true
+					for _, p := range m.Players {
+						m.Correct[p] = 0
+					}
 					m.BroadcastStartGame()
+
 				} else {
 					// TODO: Need to send a winner here
 					m.BroadcastWinner()
@@ -163,7 +167,7 @@ func (m *Manager) Run() {
 
 			}
 			m.BroadcastTime()
-			//m.BroadcastState()
+			m.BroadcastState()
 			if !m.GameStarted {
 				m.BroadcastPlayers()
 			}
@@ -193,12 +197,7 @@ func (m *Manager) Run() {
 				continue
 			}
 			m.Board[item] = player
-			count, ok := m.Correct[player]
-			if !ok {
-				m.Correct[player] = 1
-			} else {
-				m.Correct[player] = count + 1
-			}
+			m.Correct[player] += 1
 			m.SquaresTaken += 1
 			if m.SquaresTaken == len(m.Board) {
 				m.BroadcastWinner()

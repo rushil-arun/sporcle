@@ -137,6 +137,18 @@
     box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
   }
 
+  /* Number input spinner styling */
+  .input-sporacle[type="number"]::-webkit-inner-spin-button,
+  .input-sporacle[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+
+  .input-sporacle[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   .code-box {
     @apply w-10 h-12 bg-input border-2 border-border rounded-xl text-center text-lg font-semibold text-foreground
            outline-none transition-all duration-200 uppercase;

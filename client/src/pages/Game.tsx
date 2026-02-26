@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import { Progress } from "@/components/ui/progress";
 import { useGame } from '../context/GameContext';
 import { useNavigate } from "react-router-dom";
 import type { LeaderboardEntry } from "@/types/types";
@@ -11,7 +10,6 @@ const TOTAL_SECONDS = 120;
 
 // Map<item, { username, color }>
 type PlayerMeta = { username: string; color: string };
-type Request = { username: string, code: string, Item: string }
 const INITIAL_BOARD = new Map<string, PlayerMeta>([
 ]);
 

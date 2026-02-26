@@ -15,13 +15,13 @@ export const useCreateGame = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createGame = async (title: string): Promise<string | null> => {
+  const createGame = async (title: string, lobbyTime: number, gameTime: number): Promise<string | null> => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.post<CreateGameResponse>(
         `${API_BASE_URL}/create-game`,
-        { title },
+        { title, lobbyTime, gameTime },
         { headers: { 'Content-Type': 'application/json' } }
       );
       return response.data.code;

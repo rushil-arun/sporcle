@@ -136,7 +136,7 @@ func TestRead_ValidRequestAppearsOnInboundRequests(t *testing.T) {
 		t.Fatalf("WriteJSON: %v", err)
 	}
 
-	iters := 100
+	iters := 10
 	for range iters {
 		var got map[string]interface{}
 		if err := conn.ReadJSON(&got); err != nil {
@@ -145,24 +145,24 @@ func TestRead_ValidRequestAppearsOnInboundRequests(t *testing.T) {
 		if got["Type"] == "Board" {
 			stateVal, ok := got["State"]
 			if !ok {
-				t.Fatal("no State in board event")
+				continue
 			}
 			stateMap, ok := stateVal.(map[string]interface{})
 			if !ok {
-				t.Fatalf("State is %T, want map", stateMap)
+				continue
 			}
 			player, ok := stateMap["Olympia"]
 			if !ok || player == nil {
-				t.Errorf("Olympia not in State or nil: %v", stateMap["Olympia"])
+				continue
 			}
 			playerMap, ok := player.(map[string]interface{})
 			if playerMap["username"] != "LeBron" {
-				t.Errorf("Olympia Player should be LeBron, was: %v", player)
+				continue
 			}
 			return
 		}
 	}
-	t.Errorf("Did not recieve a message of type board in %d iters", iters)
+	t.Errorf("Did not recieve a message of type board with LeBron: Olympia mapping in %d iters", iters)
 }
 
 func TestRead_InvalidRequestIgnored(t *testing.T) {
@@ -191,7 +191,7 @@ func TestRead_InvalidRequestIgnored(t *testing.T) {
 		t.Fatalf("WriteJSON valid: %v", err)
 	}
 
-	iters := 100
+	iters := 10
 	found := false
 	for range iters {
 		var got map[string]interface{}
@@ -219,34 +219,35 @@ func TestRead_InvalidRequestIgnored(t *testing.T) {
 		t.Fatalf("WriteJSON valid2: %v", err)
 	}
 
-	iters = 100
-	found = false
+	iters = 10
 	var got map[string]interface{}
 	for range iters {
 		if err := conn.ReadJSON(&got); err != nil {
 			t.Fatalf("ReadJSON response: %v", err)
 		}
 		if got["Type"] == "Board" {
-			found = true
-			break
+			// Invalid request should have been skipped; we got Oklahoma City not something from invalid
+			stateVal, ok := got["State"]
+			if !ok {
+				continue
+			}
+			stateMap, ok := stateVal.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			city, ok := stateMap["Oklahoma City"]
+			if !ok || city == nil {
+				continue
+			}
+			playerMap, ok := city.(map[string]interface{})
+			if playerMap["username"] != "LeBron" {
+				continue
+			}
+			return
 		}
 	}
-	if !found {
-		t.Fatalf("Did not recieve a message of type board in %d iters", iters)
-	}
-	// Invalid request should have been skipped; we got Oklahoma City not something from invalid
-	stateVal, ok := got["State"]
-	if !ok {
-		t.Fatal("no State in board event")
-	}
-	stateMap, ok := stateVal.(map[string]interface{})
-	if !ok {
-		t.Fatalf("State is %T, want map", stateVal)
-	}
-	sac, ok := stateMap["Oklahoma City"]
-	if !ok || sac == nil {
-		t.Errorf("Oklahoma City not in State or nil: %v", stateMap["Oklahoma City"])
-	}
+	t.Fatalf("Did not recieve a message of type board with LeBron: Oklahoma City mapping in %d iters", iters)
+
 }
 
 func TestRun_ProcessesInboundRequestAndBroadcastsState(t *testing.T) {
@@ -311,32 +312,30 @@ func TestRun_ProcessesInboundRequestAndBroadcastsState(t *testing.T) {
 
 	// Expect a board update
 	iters := 10
-	found := false
 	var boardMsg map[string]interface{}
 	for range iters {
 		if err := conn.ReadJSON(&boardMsg); err != nil {
 			t.Fatalf("ReadJSON board: %v", err)
 		}
 		if boardMsg["Type"] == "Board" {
-			found = true
-			break
+			stateVal, ok := boardMsg["State"]
+			if !ok {
+				continue
+			}
+			stateMap, ok := stateVal.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			city, ok := stateMap["Sacramento"]
+			if !ok || city == nil {
+				continue
+			}
+			playerMap, ok := city.(map[string]interface{})
+			if playerMap["username"] != "Steph" {
+				continue
+			}
+			return
 		}
 	}
-	if !found {
-		t.Errorf("got type %v, want board", boardMsg["type"])
-	}
-
-	// State should have Sacramento claimed
-	stateVal, ok := boardMsg["State"]
-	if !ok {
-		t.Fatal("no State in board event")
-	}
-	stateMap, ok := stateVal.(map[string]interface{})
-	if !ok {
-		t.Fatalf("State is %T, want map", stateVal)
-	}
-	sac, ok := stateMap["Sacramento"]
-	if !ok || sac == nil {
-		t.Errorf("Sacramento not in State or nil: %v", stateMap["Sacramento"])
-	}
+	t.Fatalf("Did not recieve a message of type board with Steph: Sacramento mapping in %d iters", iters)
 }

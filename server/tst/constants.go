@@ -1,4 +1,4 @@
 package tst
 
-const LOBBY_TIME = 2
-const GAME_TIME = 2
+const LOBBY_TIME = 10
+const GAME_TIME = 10

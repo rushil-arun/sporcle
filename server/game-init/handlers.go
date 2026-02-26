@@ -2,6 +2,7 @@ package gameinit
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	game "server/game"
@@ -27,6 +28,11 @@ func CreateHandler(globalState *state.GlobalState, w http.ResponseWriter, r *htt
 	}
 	if req.Title == "" {
 		writeError(w, http.StatusBadRequest, "title required")
+		return
+	}
+	fmt.Println(req)
+	if req.LobbyTime < 10 || req.GameTime < 10 {
+		writeError(w, http.StatusBadRequest, "Must have at least 10s for lobby/game")
 		return
 	}
 	m := globalState.Create(req.Title, req.LobbyTime, req.GameTime)
